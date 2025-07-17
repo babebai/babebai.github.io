@@ -1,26 +1,40 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HINSKENNY</title>
     <style>
-        body, html {
-            height: 100%;
+        body {
             margin: 0;
             padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background-color: #000000; 
+            height: 100vh;
+            background-image: url('background.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
         }
-        img {
-            max-width: 100%;
-            max-height: 100%;
+        #playButton {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
-    <img src="background.jpg" alt="HINSKENNY Image">
+    <button id="playButton">播放音乐</button>
+    
+    <audio id="bgm" loop>
+        <source src="bgm.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        document.getElementById('playButton').addEventListener('click', function() {
+            var audio = document.getElementById('bgm');
+            audio.play();
+            this.style.display = 'none';
+        });
+    </script>
 </body>
 </html>

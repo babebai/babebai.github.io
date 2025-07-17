@@ -11,29 +11,30 @@
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
-        }
-        #playButton {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            padding: 10px 20px;
-            font-size: 16px;
             cursor: pointer;
         }
     </style>
 </head>
 <body>
-    <button id="playButton">play</button>
-    
-    <audio id="bgm" loop>
+    <audio id="bgm" loop muted autoplay>
         <source src="bgm.mp3" type="audio/mpeg">
     </audio>
 
     <script>
-        document.getElementById('playButton').addEventListener('click', function() {
-            var audio = document.getElementById('bgm');
-            audio.play();
-            this.style.display = 'none';
+        // 初始设置为静音自动播放
+        const audio = document.getElementById('bgm');
+        
+        // 用户点击页面后取消静音
+        document.body.addEventListener('click', function() {
+            audio.muted = false;
+        }, { once: true });
+        
+        // 或者页面加载后尝试取消静音
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                audio.muted = false;
+                audio.play().catch(e => console.log(e));
+            }, 1000);
         });
     </script>
 </body>

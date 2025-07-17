@@ -2,32 +2,33 @@
 <html>
 <head>
     <title>HINSKENNY</title>
-  <style>
-    body {
-        margin: 0;
-        padding: 0;
-        height: 100vh;
-        background-image: url('background.jpg');
-        background-size: cover;
-        background-position: 50% center;
-        background-repeat: no-repeat;
-        font-family: Arial, sans-serif;
-    }
-    
-    /* 当屏幕宽度小于768px（通常是手机）时 */
-    @media (max-width: 768px) {
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
         body {
-            background-position: 70% center; /* 手机端向右偏移 */
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            background-image: url('background.jpg');
+            background-size: cover;
+            background-position: 50% center; /* 桌面端居中 */
+            background-repeat: no-repeat;
+            font-family: Arial, sans-serif;
         }
-    }
+        
+        /* 手机端调整 - 使用更小的断点并添加!important确保覆盖 */
+        @media (max-width: 600px) {
+            body {
+                background-position: 65% center !important;
+            }
+        }
         
         /* 音乐控制按钮样式 */
         .music-control {
             position: fixed;
-            bottom: 30px;
-            right: 30px;
-            width: 60px;
-            height: 60px;
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
             background: rgba(255, 255, 255, 0.2);
             backdrop-filter: blur(5px);
             border-radius: 50%;
@@ -67,46 +68,6 @@
             border-left: 6px solid #fff;
             border-right: 6px solid #fff;
         }
-        
-        /* 音量控制滑块 */
-        .volume-control {
-            position: fixed;
-            bottom: 100px;
-            right: 45px;
-            width: 30px;
-            height: 120px;
-            background: rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(5px);
-            border-radius: 15px;
-            padding: 15px 0;
-            display: none;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 99;
-        }
-        
-        .music-control:hover + .volume-control,
-        .volume-control:hover {
-            display: flex;
-        }
-        
-        input[type="range"] {
-            -webkit-appearance: slider-vertical;
-            width: 120px;
-            height: 30px;
-            transform: rotate(-90deg);
-            background: transparent;
-        }
-        
-        input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 15px;
-            height: 15px;
-            border-radius: 50%;
-            background: #fff;
-            cursor: pointer;
-        }
     </style>
 </head>
 <body>
@@ -118,18 +79,9 @@
     <!-- 音乐控制按钮 -->
     <div class="music-control" id="musicBtn"></div>
     
-    <!-- 音量控制 -->
-    <div class="volume-control">
-        <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="0.7">
-    </div>
-    
     <script>
         const audio = document.getElementById('bgm');
         const musicBtn = document.getElementById('musicBtn');
-        const volumeSlider = document.getElementById('volumeSlider');
-        
-        // 设置初始音量
-        audio.volume = volumeSlider.value;
         
         // 点击按钮控制播放/暂停
         musicBtn.addEventListener('click', function() {
@@ -142,12 +94,7 @@
             }
         });
         
-        // 音量控制
-        volumeSlider.addEventListener('input', function() {
-            audio.volume = this.value;
-        });
-        
-        // 尝试自动播放（可能被浏览器阻止）
+        // 尝试自动播放
         document.addEventListener('click', function initAudio() {
             audio.play()
                 .then(() => {

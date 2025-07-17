@@ -11,30 +11,143 @@
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
+            font-family: Arial, sans-serif;
+        }
+        
+        /* 音乐控制按钮样式 */
+        .music-control {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(5px);
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            z-index: 100;
+        }
+        
+        .music-control:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+        
+        .music-control::before {
+            content: '';
+            display: block;
+            width: 0;
+            height: 0;
+            border-style: solid;
+            border-width: 10px 0 10px 20px;
+            border-color: transparent transparent transparent #fff;
+            margin-left: 3px;
+        }
+        
+        .music-control.playing::before {
+            content: '';
+            width: 6px;
+            height: 20px;
+            background: #fff;
+            margin: 0 3px;
+            display: inline-block;
+            border-left: 6px solid #fff;
+            border-right: 6px solid #fff;
+        }
+        
+        /* 音量控制滑块 */
+        .volume-control {
+            position: fixed;
+            bottom: 100px;
+            right: 45px;
+            width: 30px;
+            height: 120px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(5px);
+            border-radius: 15px;
+            padding: 15px 0;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 99;
+        }
+        
+        .music-control:hover + .volume-control,
+        .volume-control:hover {
+            display: flex;
+        }
+        
+        input[type="range"] {
+            -webkit-appearance: slider-vertical;
+            width: 120px;
+            height: 30px;
+            transform: rotate(-90deg);
+            background: transparent;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: #fff;
             cursor: pointer;
         }
     </style>
 </head>
 <body>
-    <audio id="bgm" loop muted autoplay>
+    <!-- 音乐播放器 -->
+    <audio id="bgm" loop>
         <source src="bgm.mp3" type="audio/mpeg">
     </audio>
-
+    
+    <!-- 音乐控制按钮 -->
+    <div class="music-control" id="musicBtn"></div>
+    
+    <!-- 音量控制 -->
+    <div class="volume-control">
+        <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="0.7">
+    </div>
+    
     <script>
-        // 初始设置为静音自动播放
         const audio = document.getElementById('bgm');
+        const musicBtn = document.getElementById('musicBtn');
+        const volumeSlider = document.getElementById('volumeSlider');
         
-        // 用户点击页面后取消静音
-        document.body.addEventListener('click', function() {
-            audio.muted = false;
-        }, { once: true });
+        // 设置初始音量
+        audio.volume = volumeSlider.value;
         
-        // 或者页面加载后尝试取消静音
-        window.addEventListener('load', function() {
-            setTimeout(function() {
-                audio.muted = false;
-                audio.play().catch(e => console.log(e));
-            }, 1000);
+        // 点击按钮控制播放/暂停
+        musicBtn.addEventListener('click', function() {
+            if (audio.paused) {
+                audio.play();
+                musicBtn.classList.add('playing');
+            } else {
+                audio.pause();
+                musicBtn.classList.remove('playing');
+            }
+        });
+        
+        // 音量控制
+        volumeSlider.addEventListener('input', function() {
+            audio.volume = this.value;
+        });
+        
+        // 尝试自动播放（可能被浏览器阻止）
+        document.addEventListener('click', function initAudio() {
+            audio.play()
+                .then(() => {
+                    musicBtn.classList.add('playing');
+                })
+                .catch(e => console.log('自动播放被阻止:', e));
+            document.removeEventListener('click', initAudio);
         });
     </script>
 </body>

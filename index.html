@@ -31,15 +31,15 @@
             object-fit: contain;
         }
         
-        /* 透明玻璃质感爱心按钮 */
+        /* 透明玻璃按钮 */
         .music-control {
             position: fixed;
             bottom: 15px;
             right: 15px;
-            width: 36px; /* 更小巧 */
+            width: 36px;
             height: 36px;
-            background: rgba(255, 255, 255, 0.15); /* 半透明白色 */
-            backdrop-filter: blur(8px); /* 毛玻璃效果 */
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(8px);
             border-radius: 50%;
             cursor: pointer;
             display: flex;
@@ -48,26 +48,32 @@
             transition: all 0.3s ease;
             box-shadow: 
                 0 2px 10px rgba(0, 0, 0, 0.2),
-                inset 0 0 0 1px rgba(255, 255, 255, 0.1); /* 内边框 */
+                inset 0 0 0 1px rgba(255, 255, 255, 0.1);
             z-index: 100;
             border: none;
         }
         
-        /* 爱心图标 */
+        /* 完全透明的爱心图标 */
         .music-control::before {
             content: '❤';
             font-size: 16px;
-            color: rgba(255, 255, 255, 0.9); /* 浅白色爱心 */
-            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-            transition: all 0.3s ease;
+            color: rgba(255, 255, 255, 0); /* 完全透明 */
+            text-shadow: 
+                0 0 8px rgba(255, 255, 255, 0.9), /* 纯白光晕 */
+                inset 0 0 1px rgba(255, 255, 255, 0.5); /* 内发光 */
+            -webkit-text-stroke: 1px rgba(255, 255, 255, 0.8); /* 白色描边 */
         }
         
-        /* 播放状态变为暂停符号 */
+        /* 播放状态：透明暂停符号 */
         .music-control.playing::before {
             content: '❚❚';
             font-size: 14px;
             letter-spacing: 1px;
-            color: rgba(255, 255, 255, 0.9);
+            color: rgba(255, 255, 255, 0);
+            text-shadow: 
+                0 0 8px rgba(255, 255, 255, 0.9),
+                inset 0 0 1px rgba(255, 255, 255, 0.5);
+            -webkit-text-stroke: 1px rgba(255, 255, 255, 0.8);
         }
         
         /* 悬停效果 */
@@ -93,14 +99,13 @@
         <source src="bgm.mp3" type="audio/mpeg">
     </audio>
     
-    <!-- 透明爱心音乐按钮 -->
+    <!-- 透明玻璃音乐按钮 -->
     <button class="music-control" id="musicBtn"></button>
     
     <script>
         const audio = document.getElementById('bgm');
         const musicBtn = document.getElementById('musicBtn');
         
-        // 点击按钮控制播放/暂停
         musicBtn.addEventListener('click', function() {
             if (audio.paused) {
                 audio.play();
@@ -111,7 +116,6 @@
             }
         });
         
-        // 尝试自动播放
         document.addEventListener('click', function initAudio() {
             audio.play()
                 .then(() => {

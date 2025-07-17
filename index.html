@@ -2,7 +2,7 @@
 <html lang="zh">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>HINSKENNY</title>
     <style>
         /* 基础重置 */
@@ -12,94 +12,64 @@
             box-sizing: border-box;
         }
         
-        /* 页面整体样式 */
+        /* 页面整体样式 - 全屏背景 */
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             height: 100vh;
+            width: 100vw;
             overflow: hidden;
-            background-color: #111;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            perspective: 1000px;
+            position: relative;
         }
         
-        /* 图片容器 - 完美展示横向图片 */
-        .image-container {
-            position: relative;
+        /* 背景图容器 - 全屏填充 */
+        .bg-container {
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            animation: fadeIn 1.5s ease-out;
+            z-index: 1;
         }
         
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+        /* 背景图样式 - 填充模式 */
+        .bg-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* 关键变化：改为cover模式 */
+            object-position: center;
+            display: block;
         }
         
-        /* 图片样式 - 保持原始比例 */
-        .full-image {
-            width: auto;
-            height: auto;
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
-            filter: brightness(0.95);
-            transition: filter 0.5s ease;
-        }
-        
-        /* 图片加载动画 */
-        .full-image.loading {
-            opacity: 0;
-            transform: scale(0.98);
-        }
-        
-        .full-image.loaded {
-            opacity: 1;
-            transform: scale(1);
-            transition: opacity 1s ease, transform 1.5s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        
-        /* 精致音乐控制按钮 */
+        /* 音乐控制按钮 - 桌面端 */
         .music-control {
             position: fixed;
-            bottom: 24px;
-            right: 24px;
+            bottom: 30px;
+            right: 30px;
             width: 44px;
             height: 44px;
-            background: rgba(255, 255, 255, 0.12);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
             border-radius: 50%;
             cursor: pointer;
             display: flex;
             justify-content: center;
             align-items: center;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: all 0.3s ease;
             box-shadow: 
-                0 4px 20px rgba(0, 0, 0, 0.15),
-                inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+                0 4px 15px rgba(0, 0, 0, 0.15),
+                inset 0 0 0 1px rgba(255, 255, 255, 0.1);
             z-index: 100;
             border: none;
             outline: none;
-            opacity: 0;
-            transform: translateY(10px);
-            animation: buttonFadeIn 1s ease 0.8s forwards;
         }
         
-        @keyframes buttonFadeIn {
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        /* 爱心图标 - 使用SVG嵌入 */
+        /* 爱心图标 */
         .music-control::before {
             content: '';
             display: block;
-            width: 22px;
-            height: 22px;
+            width: 20px;
+            height: 20px;
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='rgba(255,255,255,0.9)'%3E%3Cpath d='M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z'/%3E%3C/svg%3E");
             background-repeat: no-repeat;
             background-position: center;
@@ -110,123 +80,75 @@
         /* 播放状态变为暂停图标 */
         .music-control.playing::before {
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='rgba(255,255,255,0.9)'%3E%3Cpath d='M6 19h4V5H6v14zm8-14v14h4V5h-4z'/%3E%3C/svg%3E");
-            width: 18px;
-            height: 18px;
+            width: 16px;
+            height: 16px;
         }
         
         /* 悬停效果 */
         .music-control:hover {
             background: rgba(255, 255, 255, 0.2);
-            transform: scale(1.1) rotate(5deg);
-            box-shadow: 
-                0 6px 25px rgba(0, 0, 0, 0.2),
-                inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+            transform: scale(1.1);
         }
         
-        /* 点击效果 */
-        .music-control:active {
-            transform: scale(0.95);
-            background: rgba(255, 255, 255, 0.15);
-        }
-        
-        /* 音量控制 - 悬停显示 */
-        .volume-control {
-            position: fixed;
-            bottom: 80px;
-            right: 33px;
-            width: 24px;
-            height: 100px;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(15px);
-            border-radius: 12px;
-            padding: 15px 0;
-            display: none;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 99;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            opacity: 0;
-            transform: translateY(10px);
-            transition: all 0.3s ease;
-        }
-        
-        .music-control:hover + .volume-control,
-        .volume-control:hover {
-            display: flex;
-            opacity: 1;
-            transform: translateY(0);
-        }
-        
-        /* 音量滑块 */
-        input[type="range"] {
-            -webkit-appearance: slider-vertical;
-            width: 100px;
-            height: 24px;
-            transform: rotate(-90deg);
-            background: transparent;
-            cursor: pointer;
-        }
-        
-        input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 14px;
-            height: 14px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.9);
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-        }
-        
-        /* 加载指示器 */
-        .loader {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 40px;
-            height: 40px;
-            border: 3px solid rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            border-top-color: rgba(255, 255, 255, 0.8);
-            animation: spin 1s ease-in-out infinite;
-            z-index: 10;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-        
-        @keyframes spin {
-            to { transform: translate(-50%, -50%) rotate(360deg); }
-        }
-        
-        /* 响应式调整 */
+        /* 手机端样式调整 */
         @media (max-width: 768px) {
+            /* 背景图横向填充 */
+            .bg-image {
+                object-fit: cover;
+                object-position: center center;
+            }
+            
+            /* 更小的音乐按钮 */
             .music-control {
-                width: 40px;
-                height: 40px;
+                width: 36px;
+                height: 36px;
                 bottom: 20px;
                 right: 20px;
             }
             
             .music-control::before {
-                width: 20px;
-                height: 20px;
+                width: 18px;
+                height: 18px;
             }
             
             .music-control.playing::before {
+                width: 14px;
+                height: 14px;
+            }
+        }
+        
+        /* 非常小的手机设备 */
+        @media (max-width: 480px) {
+            .music-control {
+                width: 32px;
+                height: 32px;
+                bottom: 15px;
+                right: 15px;
+            }
+            
+            .music-control::before {
                 width: 16px;
                 height: 16px;
+            }
+            
+            .music-control.playing::before {
+                width: 12px;
+                height: 12px;
+            }
+        }
+        
+        /* 确保按钮在iOS设备上可见 */
+        @supports (-webkit-touch-callout: none) {
+            .music-control {
+                background: rgba(255, 255, 255, 0.25);
             }
         }
     </style>
 </head>
 <body>
-    <!-- 加载指示器 -->
-    <div class="loader" id="loader"></div>
-    
-    <!-- 图片容器 -->
-    <div class="image-container">
-        <img src="background.jpg" class="full-image loading" alt="背景图" id="bgImage">
+    <!-- 背景图容器 -->
+    <div class="bg-container">
+        <img src="background.jpg" class="bg-image" alt="背景图" id="bgImage">
     </div>
     
     <!-- 音乐播放器 -->
@@ -237,42 +159,18 @@
     <!-- 音乐控制按钮 -->
     <button class="music-control" id="musicBtn" aria-label="音乐控制"></button>
     
-    <!-- 音量控制 -->
-    <div class="volume-control">
-        <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="0.7" aria-label="音量控制">
-    </div>
-    
     <script>
-        // 等待DOM加载完成
         document.addEventListener('DOMContentLoaded', function() {
             const audio = document.getElementById('bgm');
             const musicBtn = document.getElementById('musicBtn');
-            const volumeSlider = document.getElementById('volumeSlider');
             const bgImage = document.getElementById('bgImage');
-            const loader = document.getElementById('loader');
             
-            // 显示加载指示器
-            loader.style.opacity = '1';
+            // 确保按钮始终可见
+            musicBtn.style.display = 'flex';
             
-            // 图片加载完成后
+            // 图片加载后确保按钮可见
             bgImage.addEventListener('load', function() {
-                this.classList.remove('loading');
-                this.classList.add('loaded');
-                loader.style.opacity = '0';
-            });
-            
-            // 图片加载失败处理
-            bgImage.addEventListener('error', function() {
-                loader.style.opacity = '0';
-                console.error('图片加载失败');
-            });
-            
-            // 设置初始音量
-            audio.volume = volumeSlider.value;
-            
-            // 音量控制
-            volumeSlider.addEventListener('input', function() {
-                audio.volume = this.value;
+                musicBtn.style.opacity = '1';
             });
             
             // 点击按钮控制播放/暂停
@@ -306,13 +204,31 @@
             // 用户首次点击页面时初始化音频
             document.addEventListener('click', initAudio);
             
-            // 键盘快捷键支持
-            document.addEventListener('keydown', function(e) {
-                if (e.code === 'Space') {
-                    e.preventDefault();
-                    musicBtn.click();
+            // 确保背景图填充整个视口
+            function resizeBackground() {
+                const aspectRatio = bgImage.naturalWidth / bgImage.naturalHeight;
+                const windowRatio = window.innerWidth / window.innerHeight;
+                
+                if (windowRatio > aspectRatio) {
+                    // 窗口更宽，按高度填充
+                    bgImage.style.width = 'auto';
+                    bgImage.style.height = '100%';
+                } else {
+                    // 窗口更高，按宽度填充
+                    bgImage.style.width = '100%';
+                    bgImage.style.height = 'auto';
                 }
-            });
+            }
+            
+            // 初始调整
+            if (bgImage.complete) {
+                resizeBackground();
+            } else {
+                bgImage.addEventListener('load', resizeBackground);
+            }
+            
+            // 窗口大小改变时调整
+            window.addEventListener('resize', resizeBackground);
         });
     </script>
 </body>

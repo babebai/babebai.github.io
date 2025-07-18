@@ -3,6 +3,9 @@
 <head>
     <title>HINSKENNY</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+
     <style>
         body {
             margin: 0;
@@ -57,11 +60,11 @@
         .music-control::before {
             content: '❤';
             font-size: 16px;
-            color: transparent !important; /* 强制完全透明 */
+            color: transparent !important;
             text-shadow: 
-                0 0 10px rgba(255, 255, 255, 0.8), /* 外发光 */
-                inset 0 0 5px rgba(255, 255, 255, 0.5); /* 内发光 */
-            -webkit-text-stroke: 1px rgba(255, 255, 255, 0.9); /* 白色描边 */
+                0 0 10px rgba(255, 255, 255, 0.8),
+                inset 0 0 5px rgba(255, 255, 255, 0.5);
+            -webkit-text-stroke: 1px rgba(255, 255, 255, 0.9);
         }
         
         /* 播放状态：透明暂停符号 */
@@ -76,30 +79,25 @@
             -webkit-text-stroke: 1px rgba(255, 255, 255, 0.9);
         }
         
-        /* 悬停效果 */
         .music-control:hover {
             background: rgba(255, 255, 255, 0.25);
             transform: scale(1.1);
         }
         
-        /* 点击效果 */
         .music-control:active {
             transform: scale(0.95);
         }
     </style>
 </head>
 <body>
-    <!-- 图片容器 -->
     <div class="image-container">
         <img src="background.jpg" class="full-image" alt="背景图">
     </div>
     
-    <!-- 音乐播放器 -->
     <audio id="bgm" loop>
         <source src="bgm.mp3" type="audio/mpeg">
     </audio>
     
-    <!-- 透明玻璃音乐按钮 -->
     <button class="music-control" id="musicBtn"></button>
     
     <script>
@@ -127,3 +125,4 @@
     </script>
 </body>
 </html>
+

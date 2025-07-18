@@ -3,9 +3,8 @@
 <head>
     <title>HINSKENNY</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
+    <!-- Favicon -->
     <link rel="icon" href="favicon.ico" type="image/x-icon">
-
     <style>
         body {
             margin: 0;
@@ -15,66 +14,66 @@
             font-family: Arial, sans-serif;
         }
 
-        /* 照片墙容器 */
-        .gallery {
-            display: grid;
-            grid-template-columns: 2fr 1fr;  /* 左侧大图区域，右侧小图区域 */
-            grid-template-rows: auto auto;   /* 上方大图+2小图，下方4小图 */
+        /* 主容器 */
+        .container {
+            display: flex; /* 左侧大图 + 右侧小图 */
             gap: 10px;
-            max-width: 1200px;
-            margin: 0 auto;
+            margin-bottom: 10px;
         }
 
-        /* 大图样式 */
+        /* 左侧大图 */
+        .large-img-container {
+            flex: 2; /* 占2/3宽度 */
+        }
         .large-img {
-            grid-column: 1;
-            grid-row: 1;
             width: 100%;
-            height: 400px;
+            height: 600px; /* 固定高度（或改用100%根据父容器） */
             object-fit: cover;
             border-radius: 8px;
-            transition: all 0.3s ease;
         }
 
-        /* 右侧上下两张小图 */
-        .small-img-1, .small-img-2 {
-            grid-column: 2;
+        /* 右侧2张小图 */
+        .small-imgs-right {
+            flex: 1; /* 占1/3宽度 */
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .small-img-right {
             width: 100%;
-            height: 195px; /* (400px总高 - 10px间隔) / 2 */
+            height: 295px; /* (600px总高 - 10px间隔) / 2 */
             object-fit: cover;
             border-radius: 8px;
-            transition: all 0.3s ease;
         }
 
         /* 下方4张小图 */
-        .small-img-3, .small-img-4, 
-        .small-img-5, .small-img-6 {
-            grid-column: auto;
-            grid-row: 2;
+        .bottom-imgs {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+        .small-img-bottom {
             width: 100%;
-            height: 195px;
+            height: 200px;
             object-fit: cover;
             border-radius: 8px;
-            transition: all 0.3s ease;
         }
 
-        /* 默认所有图片半透明 */
-        .gallery img {
+        /* 悬停效果 */
+        img {
             opacity: 0.7;
             filter: brightness(0.8);
+            transition: all 0.3s;
             cursor: pointer;
         }
-
-        /* 悬停时高亮当前图片，其他图片更暗 */
-        .gallery img:hover {
+        img:hover {
             opacity: 1;
             filter: brightness(1.1);
             transform: scale(1.02);
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
-            z-index: 10;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
         }
 
-        /* 保留原有的透明音乐播放器 */
+        /* 音乐播放器（保持不变） */
         .music-control {
             position: fixed;
             bottom: 15px;
@@ -95,7 +94,6 @@
             z-index: 100;
             border: none;
         }
-
         .music-control::before {
             content: '❤';
             font-size: 16px;
@@ -105,7 +103,6 @@
                 inset 0 0 5px rgba(255, 255, 255, 0.5);
             -webkit-text-stroke: 1px rgba(255, 255, 255, 0.9);
         }
-
         .music-control.playing::before {
             content: '❚❚';
             font-size: 14px;
@@ -119,51 +116,47 @@
     </style>
 </head>
 <body>
-    <!-- 照片墙布局 -->
-    <div class="gallery">
-        <!-- 大图 -->
-        <img src="image1.jpg" class="large-img" alt="大图">
+    <!-- 上部：左侧大图 + 右侧2张小图 -->
+    <div class="container">
+        <!-- 左侧大图 -->
+        <div class="large-img-container">
+            <img src="image1.jpg" class="large-img" alt="大图">
+        </div>
         
-        <!-- 右侧上下两张小图 -->
-        <img src="image2.jpg" class="small-img-1" alt="小图1">
-        <img src="image3.jpg" class="small-img-2" alt="小图2">
-        
-        <!-- 下方4张小图 -->
-        <img src="image4.jpg" class="small-img-3" alt="小图3">
-        <img src="image5.jpg" class="small-img-4" alt="小图4">
-        <img src="image6.jpg" class="small-img-5" alt="小图5">
-        <img src="image7.jpg" class="small-img-6" alt="小图6">
+        <!-- 右侧2张小图 -->
+        <div class="small-imgs-right">
+            <img src="image2.jpg" class="small-img-right" alt="右上小图">
+            <img src="image3.jpg" class="small-img-right" alt="右下小图">
+        </div>
+    </div>
+
+    <!-- 下部：4张小图平铺 -->
+    <div class="bottom-imgs">
+        <img src="image4.jpg" class="small-img-bottom" alt="底部小图1">
+        <img src="image5.jpg" class="small-img-bottom" alt="底部小图2">
+        <img src="image6.jpg" class="small-img-bottom" alt="底部小图3">
+        <img src="image7.jpg" class="small-img-bottom" alt="底部小图4">
     </div>
 
     <!-- 音乐播放器 -->
     <audio id="bgm" loop>
         <source src="bgm.mp3" type="audio/mpeg">
     </audio>
-    
-    <!-- 音乐控制按钮 -->
     <button class="music-control" id="musicBtn"></button>
 
     <script>
         // 悬停高亮逻辑
-        const images = document.querySelectorAll('.gallery img');
-        
+        const images = document.querySelectorAll('img');
         images.forEach(img => {
-            img.addEventListener('mouseenter', function() {
-                // 当前图片高亮
-                this.style.opacity = '1';
-                this.style.filter = 'brightness(1.1)';
-                
-                // 其他图片变暗
+            img.addEventListener('mouseenter', () => {
                 images.forEach(otherImg => {
-                    if (otherImg !== this) {
+                    if (otherImg !== img) {
                         otherImg.style.opacity = '0.5';
                         otherImg.style.filter = 'brightness(0.6)';
                     }
                 });
             });
-            
-            img.addEventListener('mouseleave', function() {
-                // 恢复默认状态
+            img.addEventListener('mouseleave', () => {
                 images.forEach(img => {
                     img.style.opacity = '0.7';
                     img.style.filter = 'brightness(0.8)';
@@ -171,28 +164,18 @@
             });
         });
 
-        // 保留原有的音乐播放器功能
+        // 音乐播放器逻辑
         const audio = document.getElementById('bgm');
         const musicBtn = document.getElementById('musicBtn');
-        
-        musicBtn.addEventListener('click', function() {
-            if (audio.paused) {
-                audio.play();
-                musicBtn.classList.add('playing');
-            } else {
-                audio.pause();
-                musicBtn.classList.remove('playing');
-            }
+        musicBtn.addEventListener('click', () => {
+            audio.paused ? audio.play() : audio.pause();
+            musicBtn.classList.toggle('playing', !audio.paused);
         });
-        
         document.addEventListener('click', function initAudio() {
-            audio.play()
-                .then(() => {
-                    musicBtn.classList.add('playing');
-                })
-                .catch(e => console.log('自动播放被阻止:', e));
+            audio.play().catch(e => console.log('自动播放被阻止:', e));
             document.removeEventListener('click', initAudio);
         });
     </script>
 </body>
 </html>
+

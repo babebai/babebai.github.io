@@ -9,32 +9,72 @@
     <style>
         body {
             margin: 0;
-            padding: 0;
-            height: 100vh;
-            overflow: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            padding: 20px;
+            min-height: 100vh;
             background-color: #000;
+            font-family: Arial, sans-serif;
         }
-        
-        .image-container {
+
+        /* 照片墙容器 */
+        .gallery {
+            display: grid;
+            grid-template-columns: 2fr 1fr;  /* 左侧大图区域，右侧小图区域 */
+            grid-template-rows: auto auto;   /* 上方大图+2小图，下方4小图 */
+            gap: 10px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* 大图样式 */
+        .large-img {
+            grid-column: 1;
+            grid-row: 1;
             width: 100%;
-            height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            height: 400px;
+            object-fit: cover;
+            border-radius: 8px;
+            transition: all 0.3s ease;
         }
-        
-        .full-image {
-            width: auto;
-            height: auto;
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
+
+        /* 右侧上下两张小图 */
+        .small-img-1, .small-img-2 {
+            grid-column: 2;
+            width: 100%;
+            height: 195px; /* (400px总高 - 10px间隔) / 2 */
+            object-fit: cover;
+            border-radius: 8px;
+            transition: all 0.3s ease;
         }
-        
-        /* 透明玻璃按钮 */
+
+        /* 下方4张小图 */
+        .small-img-3, .small-img-4, 
+        .small-img-5, .small-img-6 {
+            grid-column: auto;
+            grid-row: 2;
+            width: 100%;
+            height: 195px;
+            object-fit: cover;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        /* 默认所有图片半透明 */
+        .gallery img {
+            opacity: 0.7;
+            filter: brightness(0.8);
+            cursor: pointer;
+        }
+
+        /* 悬停时高亮当前图片，其他图片更暗 */
+        .gallery img:hover {
+            opacity: 1;
+            filter: brightness(1.1);
+            transform: scale(1.02);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+            z-index: 10;
+        }
+
+        /* 保留原有的透明音乐播放器 */
         .music-control {
             position: fixed;
             bottom: 15px;
@@ -55,8 +95,7 @@
             z-index: 100;
             border: none;
         }
-        
-        /* 完全透明的爱心图标 */
+
         .music-control::before {
             content: '❤';
             font-size: 16px;
@@ -66,8 +105,7 @@
                 inset 0 0 5px rgba(255, 255, 255, 0.5);
             -webkit-text-stroke: 1px rgba(255, 255, 255, 0.9);
         }
-        
-        /* 播放状态：透明暂停符号 */
+
         .music-control.playing::before {
             content: '❚❚';
             font-size: 14px;
@@ -78,29 +116,62 @@
                 inset 0 0 5px rgba(255, 255, 255, 0.5);
             -webkit-text-stroke: 1px rgba(255, 255, 255, 0.9);
         }
-        
-        .music-control:hover {
-            background: rgba(255, 255, 255, 0.25);
-            transform: scale(1.1);
-        }
-        
-        .music-control:active {
-            transform: scale(0.95);
-        }
     </style>
 </head>
 <body>
-    <div class="image-container">
-        <img src="background.jpg" class="full-image" alt="背景图">
+    <!-- 照片墙布局 -->
+    <div class="gallery">
+        <!-- 大图 -->
+        <img src="image1.jpg" class="large-img" alt="大图">
+        
+        <!-- 右侧上下两张小图 -->
+        <img src="image2.jpg" class="small-img-1" alt="小图1">
+        <img src="image3.jpg" class="small-img-2" alt="小图2">
+        
+        <!-- 下方4张小图 -->
+        <img src="image4.jpg" class="small-img-3" alt="小图3">
+        <img src="image5.jpg" class="small-img-4" alt="小图4">
+        <img src="image6.jpg" class="small-img-5" alt="小图5">
+        <img src="image7.jpg" class="small-img-6" alt="小图6">
     </div>
-    
+
+    <!-- 音乐播放器 -->
     <audio id="bgm" loop>
         <source src="bgm.mp3" type="audio/mpeg">
     </audio>
     
+    <!-- 音乐控制按钮 -->
     <button class="music-control" id="musicBtn"></button>
-    
+
     <script>
+        // 悬停高亮逻辑
+        const images = document.querySelectorAll('.gallery img');
+        
+        images.forEach(img => {
+            img.addEventListener('mouseenter', function() {
+                // 当前图片高亮
+                this.style.opacity = '1';
+                this.style.filter = 'brightness(1.1)';
+                
+                // 其他图片变暗
+                images.forEach(otherImg => {
+                    if (otherImg !== this) {
+                        otherImg.style.opacity = '0.5';
+                        otherImg.style.filter = 'brightness(0.6)';
+                    }
+                });
+            });
+            
+            img.addEventListener('mouseleave', function() {
+                // 恢复默认状态
+                images.forEach(img => {
+                    img.style.opacity = '0.7';
+                    img.style.filter = 'brightness(0.8)';
+                });
+            });
+        });
+
+        // 保留原有的音乐播放器功能
         const audio = document.getElementById('bgm');
         const musicBtn = document.getElementById('musicBtn');
         
@@ -125,4 +196,3 @@
     </script>
 </body>
 </html>
-

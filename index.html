@@ -6,33 +6,30 @@
     <!-- Favicon -->
     <link rel="icon" href="favicon.ico" type="image/x-icon">
     <style>
+        /* 全局样式 */
         body {
             margin: 0;
-            padding: 20px;
+            padding: 10px;
             min-height: 100vh;
             background-color: #000;
             font-family: Arial, sans-serif;
         }
 
-        /* 主容器 */
+        /* 电脑端布局：左侧大图 + 右侧2张小图 */
         .container {
-            display: flex; /* 左侧大图 + 右侧小图 */
+            display: flex;
             gap: 10px;
             margin-bottom: 10px;
         }
-
-        /* 左侧大图 */
         .large-img-container {
             flex: 2; /* 占2/3宽度 */
         }
         .large-img {
             width: 100%;
-            height: 600px; /* 固定高度（或改用100%根据父容器） */
+            height: 600px; /* 固定高度 */
             object-fit: cover;
             border-radius: 8px;
         }
-
-        /* 右侧2张小图 */
         .small-imgs-right {
             flex: 1; /* 占1/3宽度 */
             display: flex;
@@ -41,12 +38,12 @@
         }
         .small-img-right {
             width: 100%;
-            height: 295px; /* (600px总高 - 10px间隔) / 2 */
+            height: 295px; /* (600 - 10) / 2 */
             object-fit: cover;
             border-radius: 8px;
         }
 
-        /* 下方4张小图 */
+        /* 底部4张小图 */
         .bottom-imgs {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -55,31 +52,31 @@
         .small-img-bottom {
             width: 100%;
             height: 100%;
-            object-fit: cover;
+            object-fit:100%; cover;
             border-radius: 8px;
         }
 
-        /* 悬停效果 */
+        /* 悬停/点击高亮效果 */
         img {
             opacity: 0.7;
             filter: brightness(0.8);
             transition: all 0.3s;
             cursor: pointer;
         }
-        img:hover {
+        img.active, img:hover {
             opacity: 1;
             filter: brightness(1.1);
             transform: scale(1.02);
             box-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
         }
 
-        /* 音乐播放器（保持不变） */
+        /* 音乐播放器 */
         .music-control {
             position: fixed;
-            bottom: 15px;
-            right: 15px;
-            width: 36px;
-            height: 36px;
+            bottom: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
             background: rgba(255, 255, 255, 0.15);
             backdrop-filter: blur(8px);
             border-radius: 50%;
@@ -113,29 +110,49 @@
                 inset 0 0 5px rgba(255, 255, 255, 0.5);
             -webkit-text-stroke: 1px rgba(255, 255, 255, 0.9);
         }
+
+        /* 手机端适配 */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column; /* 垂直排列 */
+            }
+            .large-img {
+                height: auto; /* 高度自适应 */
+                max-height: 60vh;
+            }
+            .small-imgs-right {
+                flex-direction: row; /* 右侧小图横向排列 */
+            }
+            .small-img-right {
+                height: 25vh; /* 固定高度 */
+            }
+            .bottom-imgs {
+                grid-template-columns: repeat(2, 1fr); /* 2列 */
+            }
+            .small-img-bottom {
+                height: 20vh;
+            }
+        }
     </style>
 </head>
 <body>
     <!-- 上部：左侧大图 + 右侧2张小图 -->
     <div class="container">
-        <!-- 左侧大图 -->
         <div class="large-img-container">
-            <img src="image1.jpg" class="large-img" alt="大图">
+            <img src="image1.jpg" class="large-img" alt="世纪之吻">
         </div>
-        
-        <!-- 右侧2张小图 -->
         <div class="small-imgs-right">
-            <img src="image2.jpg" class="small-img-right" alt="右上小图">
-            <img src="image3.jpg" class="small-img-right" alt="右下小图">
+            <img src="image2.jpg" class="small-img-right" alt="kig1">
+            <img src="image3.jpg" class="small-img-right" alt="kig2">
         </div>
     </div>
 
     <!-- 下部：4张小图平铺 -->
     <div class="bottom-imgs">
-        <img src="image4.jpg" class="small-img-bottom" alt="底部小图1">
-        <img src="image5.jpg" class="small-img-bottom" alt="底部小图2">
-        <img src="image6.jpg" class="small-img-bottom" alt="底部小图3">
-        <img src="image7.jpg" class="small-img-bottom" alt="底部小图4">
+        <img src="image4.jpg" class="small-img-bottom" alt="kig3">
+        <img src="image5.jpg" class="small-img-bottom" alt="kig4">
+        <img src="image6.jpg" class="small-img-bottom" alt="kig5">
+        <img src="image7.jpg" class="small-img-bottom" alt="kig6">
     </div>
 
     <!-- 音乐播放器 -->
@@ -145,16 +162,17 @@
     <button class="music-control" id="musicBtn"></button>
 
     <script>
-        // 悬停高亮逻辑
+        // 悬停/点击高亮逻辑
         const images = document.querySelectorAll('img');
         images.forEach(img => {
+            // 电脑端悬停效果
             img.addEventListener('mouseenter', () => {
                 images.forEach(otherImg => {
-                    if (otherImg !== img) {
-                        otherImg.style.opacity = '0.5';
-                        otherImg.style.filter = 'brightness(0.6)';
-                    }
+                    otherImg.style.opacity = '0.5';
+                    otherImg.style.filter = 'brightness(0.6)';
                 });
+                img.style.opacity = '1';
+                img.style.filter = 'brightness(1.1)';
             });
             img.addEventListener('mouseleave', () => {
                 images.forEach(img => {
@@ -162,20 +180,35 @@
                     img.style.filter = 'brightness(0.8)';
                 });
             });
+
+            // 手机端点击效果
+            img.addEventListener('click', () => {
+                if (window.innerWidth <= 768) {
+                    images.forEach(otherImg => {
+                        otherImg.classList.remove('active');
+                    });
+                    img.classList.add('active');
+                }
+            });
         });
 
         // 音乐播放器逻辑
         const audio = document.getElementById('bgm');
         const musicBtn = document.getElementById('musicBtn');
         musicBtn.addEventListener('click', () => {
-            audio.paused ? audio.play() : audio.pause();
-            musicBtn.classList.toggle('playing', !audio.paused);
+            if (audio.paused) {
+                audio.play();
+                musicBtn.classList.add('playing');
+            } else {
+                audio.pause();
+                musicBtn.classList.remove('playing');
+            }
         });
+        // 尝试自动播放（需用户交互后触发）
         document.addEventListener('click', function initAudio() {
             audio.play().catch(e => console.log('自动播放被阻止:', e));
             document.removeEventListener('click', initAudio);
-        });
+        }, { once: true });
     </script>
 </body>
 </html>
-

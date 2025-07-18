@@ -111,28 +111,28 @@
             -webkit-text-stroke: 1px rgba(255, 255, 255, 0.9);
         }
 
-        /* 手机端适配 */
+               /* 手机端适配 */
         @media (max-width: 768px) {
             .container {
-                flex-direction: column; /* 垂直排列 */
+                flex-direction: column;
             }
             .large-img {
-                height: auto; /* 高度自适应 */
+                height: auto;
                 max-height: 60vh;
+            }
+            /* 统一右侧和底部小图尺寸 */
+            .small-img-right, .small-img-bottom {
+                height: 25vh !important; /* 强制相同高度 */
+                width: 100%;
             }
             .small-imgs-right {
                 flex-direction: row; /* 右侧小图横向排列 */
             }
-            .small-img-right {
-                height: 25vh; /* 固定高度 */
-            }
             .bottom-imgs {
-                grid-template-columns: repeat(2, 1fr); /* 2列 */
-            }
-            .small-img-bottom {
-                height: 25vh; /* 固定高度 */
+                grid-template-columns: repeat(2, 1fr); /* 2列布局 */
             }
         }
+
     </style>
 </head>
 <body>
